@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, Player.class);
 //                intent.putExtra("music", (Serializable) music);
                 intent.putExtra("music", musicList);
+                intent.putExtra("index", position);
                 Log.i("musicList", musicList.toString());
                 startActivity(intent);
             }

@@ -7,12 +7,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="20dp"
         android:id="@+id/player_header"
         android:orientation="vertical">
         <ImageView
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
             android:layout_marginTop="80dp"
             android:id="@+id/imageView"
             android:layout_gravity="center"/>
@@ -23,7 +22,7 @@
             android:layout_marginTop="15dp"
             android:textAlignment="center"
             android:text="title"
-            android:textSize="20sp" />
+            android:textSize="25sp" />
 
     </LinearLayout>
 
@@ -46,6 +45,7 @@
             android:minWidth="0dp"
             android:minHeight="0dp"
             android:id="@+id/btn_prev"
+            android:onClick="onClick"
             android:background="@drawable/prev" />
         <Button
             android:layout_width="50dp"
@@ -56,6 +56,7 @@
             android:minWidth="0dp"
             android:minHeight="0dp"
             android:id="@+id/btn_play"
+            android:onClick="onClick"
             android:background="@drawable/play" />
         <Button
             android:layout_width="50dp"
@@ -66,6 +67,7 @@
             android:minWidth="0dp"
             android:minHeight="0dp"
             android:id="@+id/btn_next"
+            android:onClick="onClick"
             android:background="@drawable/next" />
 
     </LinearLayout>
@@ -74,6 +76,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/progress_bar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_below="@+id/buttons"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
@@ -94,19 +97,19 @@
             android:layout_height="wrap_content"
             android:id="@+id/now_time"
             android:text="00:00"
-            android:textSize="15sp" />
+            android:textSize="20sp" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:text="/"
-            android:textSize="15sp" />
+            android:textSize="20sp" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/total_time"
             android:text="00:00"
-            android:textSize="15sp" />
+            android:textSize="20sp" />
     </LinearLayout>
 </RelativeLayout>

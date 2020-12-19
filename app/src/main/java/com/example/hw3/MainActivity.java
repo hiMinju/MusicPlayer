@@ -6,6 +6,7 @@ import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -19,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -27,11 +29,13 @@ import android.widget.TextView;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     ListView mListView = null;
     MyAdapter mAdapter = null;
+    Music music = null;
     ArrayList<Music> musicList = null;
 
     Context mContext = null;
@@ -44,8 +48,35 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        String[] files = readFile();
 
+        permission(); // permission request method
+
+        mContext = this.getBaseContext();
+
+        // 어댑터에 사용할 데이터 설정
+        musicList = new ArrayList<>();
+        mAdapter = new MyAdapter(this);
+
+        // 리스트뷰에 어댑터 설정
+        mListView = (ListView)findViewById(R.id.listView);
+        mListView.setAdapter(mAdapter);
+
+        // the clickListener of listView
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(MainActivity.this, activity_player.class);
+//                intent.putExtra("music", (Serializable) music);
+                intent.putExtra("music", musicList);
+                Log.i("musicList", musicList.toString());
+                startActivity(intent);
+            }
+        });
+
+        loadAudio();
+    }
+
+    public void permission() {
         // 접근권한이 없을때(저장공간)
         if(PackageManager.PERMISSION_GRANTED != checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
 
@@ -63,18 +94,6 @@ public class MainActivity extends AppCompatActivity {
         } else { // 접근권한이 있을때
             Log.i("TAG", "접근 허용");
         }
-
-        mContext = this.getBaseContext();
-
-        // 어댑터에 사용할 데이터 설정
-        musicList = new ArrayList<>();
-        mAdapter = new MyAdapter(this);
-
-        // 리스트뷰에 어댑터 설정
-        mListView = (ListView)findViewById(R.id.listView);
-        mListView.setAdapter(mAdapter);
-
-        loadAudio();
     }
 
     class ViewHolder {
@@ -107,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
 
         public void addItem(long trackId, long albumId, String title, String artist, String album, long mDuration, String dataPath) {
             // item에 추가할 인자들 넣기
-            Music music = new Music(trackId, albumId, title, artist, album, dataPath, mDuration);
+            music = new Music(trackId, albumId, title, artist, album, dataPath, mDuration);
             musicList.add(music);
         }
 

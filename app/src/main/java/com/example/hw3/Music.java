@@ -2,7 +2,9 @@ package com.example.hw3;
 
 import android.net.Uri;
 
-public class Music {
+import java.io.Serializable;
+
+public class Music implements Serializable {
     private Uri imageUri;
     private long id;
     private long albumId;

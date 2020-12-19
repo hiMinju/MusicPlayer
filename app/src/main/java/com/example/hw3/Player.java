@@ -1,5 +1,6 @@
 package com.example.hw3;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -9,6 +10,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -24,7 +26,7 @@ import java.util.ArrayList;
 public class Player extends AppCompatActivity implements MediaPlayer.OnCompletionListener {
     private MediaPlayer mPlayer;
     private ArrayList<Music> musicList;
-    private int position = 0; // the now position in list
+    private int index = 0; // the now position in list
 
     private TextView title;
     private ImageView albumArt;
@@ -51,7 +53,7 @@ public class Player extends AppCompatActivity implements MediaPlayer.OnCompletio
 
         mPlayer = new MediaPlayer();
         times = new ConvertTime();
-        position = intent.getIntExtra("index", 0);
+        index = intent.getIntExtra("index", 0);
 
         mPlayer.setOnCompletionListener(this);
 
@@ -64,22 +66,22 @@ public class Player extends AppCompatActivity implements MediaPlayer.OnCompletio
         switch (v.getId()) {
             case R.id.btn_next:
             {
-                if(position < (musicList.size()-1)) {
-                    position += 1;
+                if(index < (musicList.size()-1)) {
+                    index += 1;
                 }
                 else {
-                    position = 0;
+                    index = 0;
                 }
                 play();
                 break;
             }
             case R.id.btn_prev:
             {
-                if(position > 0) {
-                    position -= 1;
+                if(index > 0) {
+                    index -= 1;
                 }
                 else {
-                    position = musicList.size() - 1;
+                    index = musicList.size() - 1;
                 }
                 play();
                 break;
@@ -92,14 +94,25 @@ public class Player extends AppCompatActivity implements MediaPlayer.OnCompletio
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 100) {
+            assert data != null;
+            index = data.getIntExtra("index", 0);
+            play();
+        }
+    }
+
     // the method of playing music
     public void play() {
         try {
-            title.setText(musicList.get(position).getTitle());
+            title.setText(musicList.get(index).getTitle());
             mPlayer.reset();
-            mPlayer.setDataSource(musicList.get(position).getDataPath());
-            mPlayer.prepare();
+            mPlayer.setDataSource(musicList.get(index).getDataPath());
+            Log.i("path", musicList.get(index).getDataPath());
 
+            mPlayer.prepare();
             if(mPlayer == null) {
                 Toast.makeText(Player.this, "player is null", Toast.LENGTH_LONG).show();
                 return;
@@ -111,7 +124,7 @@ public class Player extends AppCompatActivity implements MediaPlayer.OnCompletio
             // set the album art
             final Uri artwork = Uri.parse("content://media/external/audio/albumart");
             albumArt = (ImageView)findViewById(R.id.imageView);
-            Uri albumUri = ContentUris.withAppendedId(artwork, musicList.get(position).getAlbumId());
+            Uri albumUri = ContentUris.withAppendedId(artwork, musicList.get(index).getAlbumId());
             Picasso.get().load(albumUri).into(albumArt);
 
             // Set the progress bar values
@@ -123,6 +136,7 @@ public class Player extends AppCompatActivity implements MediaPlayer.OnCompletio
             updateProgressBar();
         } catch (IOException e) {
             e.getMessage();
+            e.getCause();
             Toast.makeText(Player.this, "Error in playing", Toast.LENGTH_LONG).show();
         }
     }
@@ -168,16 +182,18 @@ public class Player extends AppCompatActivity implements MediaPlayer.OnCompletio
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mHandler.removeCallbacks(mUpdateTimeTask);
         mPlayer.release();
     }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        if(position < (musicList.size()-1)) {
-            position += 1;
+        mHandler.removeCallbacks(mUpdateTimeTask);
+        if(index < (musicList.size()-1)) {
+            index += 1;
         }
         else {
-            position = 0;
+            index = 0;
         }
         play();
     }

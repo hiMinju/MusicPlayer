@@ -5,7 +5,6 @@ import android.net.Uri;
 import java.io.Serializable;
 
 public class Music implements Serializable {
-    private Uri imageUri;
     private long id;
     private long albumId;
     private String title = "";
